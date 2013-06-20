@@ -154,3 +154,9 @@ LOGGING = {
         },
     }
 }
+
+#Link2Pay specific Tags
+#Here you can change some system configs
+
+#the price format to show on products
+SHOP_PRICE_FORMAT = '%0.2f'

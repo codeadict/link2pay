@@ -1,0 +1,102 @@
+# -*- coding: utf-8 -*-
+from cStringIO import StringIO
+from decimal import Decimal
+from PyQRNative import *
+
+from django.conf import settings
+from django.core.files import File
+from django.core.files.base import ContentFile
+from django.core.urlresolvers import reverse
+from django.db import models
+from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
+
+from core.util import CurrencyField
+
+
+class Product(models.Model):
+    """
+    Base product model
+    """
+    name = models.CharField(max_length=255, verbose_name=_('Name'))
+    slug = models.SlugField(verbose_name=_('Slug'), unique=True)
+    qr_code = models.ImageField(
+        upload_to="qr_codes/url/",
+        null=True,
+        blank=True,
+        editable=False,
+        verbose_name=_('QR Code')
+    )
+    owner = models.ForeignKey(User, null=False, blank=False, verbose_name=_('User'))
+    active = models.BooleanField(default=False, verbose_name=_('Active'))
+    date_added = models.DateTimeField(auto_now_add=True,
+        verbose_name=_('Date added'))
+    price = CurrencyField(verbose_name=_('Unit price'))
+
+    
+    
+    class Meta(object):
+        app_label = 'shop'
+        verbose_name = _('Product')
+        verbose_name_plural = _('Products')
+        
+    def __unicode__(self):
+        return self.name
+    
+    def get_absolute_url(self):
+        return reverse('product_detail', args=[self.slug])
+    
+    def get_price(self):
+        """
+        Return the price for this item
+        """
+        return self.unit_price
+    
+    def get_qr_img(self):
+        """
+        Gets generated QR image url
+        to show on admin or product details easier
+        """
+        return '%s' % self.qr_code.url
+    get_qr_img.allow_tags = True
+    
+    @property
+    def can_be_purchased(self):
+        return self.active
+    
+    def urlqrcode_pre_save(sender, instance, **kwargs):    
+        if not instance.pk:
+            instance._QRCODE = True
+        else:
+            if hasattr(instance, '_QRCODE'):
+                instance._QRCODE = False
+            else:
+                instance._QRCODE = True
+                
+    def urlqrcode_post_save(sender, instance, **kwargs):
+        if instance._QRCODE:
+            instance._QRCODE = False
+            if instance.qr_code:
+                instance.qr_code.delete()
+            qr = QRCode(4, QRErrorCorrectLevel.L)
+            qr.addData(instance.get_absolute_url)
+            qr.make()
+            image = qr.makeImage()
+     
+            #Save image to string buffer
+            image_buffer = StringIO()
+            image.save(image_buffer, format='JPEG')
+            image_buffer.seek(0)
+     
+            #Here we use django file storage system to save the image.
+            file_name = 'product_%s_%s.jpg' % (instance.owner.username, instance.name)
+            file_object = File(image_buffer, file_name)
+            content_file = ContentFile(file_object.read())
+            instance.qr_code.save(file_name, content_file, save=True)
+ 
+#Signals
+models.signals.pre_save.connect(urlqrcode_pre_save, sender=Product)
+models.signals.post_save.connect(urlqrcode_post_save, sender=Product)
+
+    
+    
