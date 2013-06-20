@@ -1,4 +1,12 @@
 # -*- coding: utf-8 -*-
+import re
+from urllib import quote
+from urllib2 import urlopen, Request, HTTPError
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 from cStringIO import StringIO
 from decimal import Decimal
 from PyQRNative import *
@@ -31,9 +39,7 @@ class Product(models.Model):
     active = models.BooleanField(default=False, verbose_name=_('Active'))
     date_added = models.DateTimeField(auto_now_add=True,
         verbose_name=_('Date added'))
-    price = CurrencyField(verbose_name=_('Unit price'))
-
-    
+    price = CurrencyField(verbose_name=_('Unit price')) 
     
     class Meta(object):
         app_label = 'shop'
@@ -45,6 +51,23 @@ class Product(models.Model):
     
     def get_absolute_url(self):
         return reverse('product_detail', args=[self.slug])
+    
+    def get_short_url(self):
+        """
+        Gets a short URL for sharing using goo.gl service
+        """
+        url = self.get_absolute_url()
+        if not re.match('http://', url):
+            raise Exception(_('Invalid URL'))
+        try:
+            urlopen(Request('http://goo.gl/api/url','url=%s'%quote(url),         
+                    {'UserAgent':'Python'}))
+        except HTTPError, e:
+            json = json.loads(e.read())
+            if 'short_url' not in json:
+                    raise Exception(_('Server has returned Invalid Response'))
+            return json['short_url']
+        raise Exception(_('Unknown error has Ocurred.'))
     
     def get_price(self):
         """
