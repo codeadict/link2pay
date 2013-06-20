@@ -28,10 +28,10 @@ class Product(models.Model):
     """
     name = models.CharField(max_length=255, verbose_name=_('Name'))
     slug = models.SlugField(verbose_name=_('Slug'), unique=True)
+    file = models.FileImage(upload_to="product_images", max_length=1024 * 200,
+                             blank=False, null=False, verbose_name=_("Product Image"))
     qr_code = models.ImageField(
-        upload_to="qr_codes/url/",
-        null=True,
-        blank=True,
+        upload_to="qr_codes/url/", null=True, blank=True,
         editable=False,
         verbose_name=_('QR Code')
     )
