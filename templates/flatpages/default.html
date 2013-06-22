@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static from staticfiles %}
+{% load shop_tags %}
+
+{% block title %}{{ flatpage.title }}{% endblock title %}
+
+{% block page-title %}
+<div class="page-title">
+	<div class="container">
+		<div class="row">
+			<div class="span12">
+				<i class="icon-user page-title-icon"></i>
+				<h2>{{ flatpage.title }}</h2>
+			</div>
+		</div>
+	</div>
+</div>        
+{% endblock %}
+
+
+{% block content %}
+	<div class="about-us-text span12">
+		{{ flatpage.content }}
+	</div>
+{% endblock %}

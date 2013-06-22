@@ -8,7 +8,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     # Examples:
-    # url(r'^$', 'link2pay.views.home', name='home'),
+    url(r'^$', include('products.urls'), name='home'),
     # url(r'^link2pay/', include('link2pay.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
@@ -16,4 +16,9 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^manager/', include(admin.site.urls)),
+)
+
+#Add Flatpages for static pages
+urlpatterns += patterns('django.contrib.flatpages.views',
+    (r'^(?P<url>.*)$', 'flatpage'),
 )

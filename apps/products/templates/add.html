@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static from staticfiles %}
+{% load shop_tags %}
+
+{% block title %}{% trans "Sell New Product" %}{% endblock title %}
+
+{% block page-title %}
+<div class="page-title">
+	<div class="container">
+		<div class="row">
+			<div class="span12">
+				<i class="page-title-icon visible-desktop"></i>
+				<h2>{% trans "Add Product" %} /</h2>
+				<p class="visible-desktop">{% trans "Add a new product to sell online." %}</p>
+			</div>
+		</div>
+	</div>
+</div>        
+{% endblock %}
+
+{% block content %}
+	<div class="contact-us container">
+	<div class="row">
+	<div class="contact-form span7">
+		<p>Use the following form to add a new product that can be shared online or using QR Codes from Mobile devices.</p>
+		<form class="form-horizontal" method="POST">
+	       		{% render_form create_form %}  
+	              
+	            <div class="form-actions text-right">
+		            <button type="submit">
+		              {% trans "Add Product" %}
+		            </button>
+	            </div>
+	     </form>             
+	</div>
+	</div>
+	</div>
+{% endblock %}
