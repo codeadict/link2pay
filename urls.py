@@ -5,6 +5,8 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
+from core.views import ContactView
+
 urlpatterns = patterns('',
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     # Examples:
@@ -16,6 +18,10 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^manager/', include(admin.site.urls)),
+    
+    url(r'^contact/$',
+        ContactView.as_view(template_name='contact.html'),
+        name='contact'),
 )
 
 #Add Flatpages for static pages

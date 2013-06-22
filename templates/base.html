@@ -33,12 +33,12 @@
                                 <span class="icon-bar"></span>
                             </a>
                             <h1>
-                                <a class="brand" href="">Link2Mars</a>
+                                <a class="brand" href="{% url "product_add" %}">Link2Mars</a>
                             </h1>
                             <div class="nav-collapse collapse">
                                 <ul class="nav pull-right">
                                     <li class="current-page">
-                                        <a href="#"><i class="icon-home"></i><br/>{% trans "Home" %}</a>
+                                        <a href="{% url "product_add" %}"><i class="icon-home"></i><br/>{% trans "Home" %}</a>
                                     </li>
                                     <li>
                                         <a href="#"><i class="icon-camera"></i><br/>{% trans "My Products" %}</a>
@@ -53,7 +53,7 @@
                                         <a href="/about/"><i class="icon-user"></i><br />{% trans "About Us" %}</a>
                                     </li>
                                     <li>
-                                        <a href="#"><i class="icon-envelope-alt"></i><br />{% trans "Contact" %}</a>
+                                        <a href="{% url "contact" %}"><i class="icon-envelope-alt"></i><br />{% trans "Contact" %}</a>
                                     </li>
                                 </ul>
                             </div>

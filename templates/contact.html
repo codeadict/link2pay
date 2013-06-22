@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static from staticfiles %}
+{% load shop_tags %}
+
+{% block title %}{% trans "Contact Us" %}{% endblock title %}
+
+
+{% block page-title %}
+<div class="page-title">
+	<div class="container">
+		<div class="row">
+			<div class="span12">
+				<i class="page-title-icon visible-desktop"></i>
+				<h2>{% trans "Contact Us" %} /</h2>
+				<p class="visible-desktop">{% trans "Get in touch with us." %}</p>
+			</div>
+		</div>
+	</div>
+</div>        
+{% endblock %}
+
+
+{% block content %}
+	<div class="contact-us container">
+	<div class="row">
+	<div class="contact-form span7">
+		<p>Use the following form to get in touch with our company.</p>
+		<form class="form-horizontal" method="POST">
+	       		{% render_form form %}  
+	              
+		            <button type="submit">
+		              {% trans "Send" %}
+		            </button>
+	     </form>             
+	</div>
+	<div class="contact-address span5">
+        <h4>We Are Here</h4>
+        <div class="map"></div>
+        
+        <h4>Address</h4>
+        <p>Some Address X <br> Taiwan</p>
+        <p>Phone: 0000 000 000 00</p>
+    </div>
+	</div>
+	</div>
+{% endblock %}
