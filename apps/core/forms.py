@@ -9,6 +9,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import forms as auth_forms
 from django.utils.translation import ugettext as _
 
+from core.util import UsernameField
+
 
 def check_password_complexity(password):
     message = _('Password must be at least 8 characters long ')
@@ -45,7 +47,6 @@ class RegisterForm(forms.ModelForm):
     password_confirm = forms.CharField(
         max_length=128,
         widget=forms.PasswordInput(render_value=False))
-    recaptcha = captcha_fields.ReCaptchaField()
     email_confirm = forms.EmailField(max_length=75)
 
     class Meta:
@@ -57,9 +58,6 @@ class RegisterForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(RegisterForm, self).__init__(*args, **kwargs)
-
-        if not settings.RECAPTCHA_PRIVATE_KEY:
-            del self.fields['recaptcha']
             
     def clean_password(self):
         password = self.cleaned_data['password']

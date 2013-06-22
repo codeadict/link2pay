@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static from staticfiles %}
+{% load shop_tags %}
+
+{% block title %}{{ product.name }}{% endblock title %}
+
+{% block page-title %}
+<div class="page-title">
+	<div class="container">
+		<div class="row">
+			<div class="span12">
+				<i class="page-title-icon visible-desktop"></i>
+				<h2>{{ product.name }}</h2>
+			</div>
+		</div>
+	</div>
+</div>        
+{% endblock %}
+
+{% block content %}
+        <div class="call-to-action container">
+            <div class="row">
+            	<p>Below are your payment linkand QR code. You can use them to collect money via Facebook, blog, mail and smartphone.</p>
+                <div class="span6">
+                	<img src="/media/{{ product.image }}"/>
+                </div>
+                <div class="span6">
+                	<img src="/media/{{ product.qr_code }}" width="300"/>
+                	<h2>{{ product.get_short_url }}</h2>
+                	
+                </div>
+            </div>
+            <div class="row">
+            	    <button type="button">
+		              {% trans "Copy Product Link" %}
+		            </button>
+            </div>
+        </div>
+
+{% endblock %}

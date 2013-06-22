@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static from staticfiles %}
+{% load shop_tags %}
+
+{% block title %}{% trans "My Products" %}{% endblock title %}
+
+{% block page-title %}
+<div class="page-title">
+	<div class="container">
+		<div class="row">
+			<div class="span12">
+				<i class="page-title-icon visible-desktop"></i>
+				<h2>{% trans "My Products" %} /</h2>
+				<p class="visible-desktop">{% trans "My product list." %}</p>
+			</div>
+		</div>
+	</div>
+</div>        
+{% endblock %}
+
+{% block content %}
+        <div class="call-to-action what-we-do container">
+            <div class="row">
+            	{% for prod in product_list %}
+                <div class="service span3">
+                    <div class="icon-awesome">
+                        <i class="icon-eye-open"><img src="/media/{{ prod.image }}" width="143" height="150"></img></i>
+                    </div>
+                    <h4><a href="{{ prod.get_absolute_url }}">{{ prod.name }}</a></h4>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+{% endblock %}
+
+

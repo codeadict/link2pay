@@ -41,7 +41,7 @@
                                         <a href="{% url "product_add" %}"><i class="icon-home"></i><br/>{% trans "Home" %}</a>
                                     </li>
                                     <li>
-                                        <a href="#"><i class="icon-camera"></i><br/>{% trans "My Products" %}</a>
+                                        <a href="{% url "product_list" %}"><i class="icon-camera"></i><br/>{% trans "My Products" %}</a>
                                     </li>
                                     <li>
                                         <a href="#"><i class="icon-comments"></i><br />{% trans "Login" %}</a>
@@ -71,6 +71,21 @@
         <div class="main-content">
             <div class="container">
                 <div class="row">
+                {% if messages %}
+				<div class="span12">
+				<div class="row">
+				
+			        <!-- Messages for this instance -->
+			        {% for message in messages %}
+			          <div class="alert">
+			             <button type="button" class="close" data-dismiss="alert">&times;</button>
+			             <strong>{{ message.tags|capfirst }}</strong> {{ message }}
+			          </div>
+			        {% endfor %}
+			    
+			    </div>
+				</div>
+			    {% endif %}
 					{% block content %}
 			
 					{% endblock content %}

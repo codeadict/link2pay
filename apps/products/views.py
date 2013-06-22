@@ -27,3 +27,39 @@ class ProductCreate(FormView, TemplateResponseMixin):
         def get_context_data(self, **kwargs):
             kwargs['create_form'] = kwargs.pop('form', None)
             return super(ProductCreate, self).get_context_data(**kwargs)
+        
+        def form_valid(self, form):
+            try:
+                if self.request.user.is_authenticated():
+                    user = self.request.user.get_profile()
+                form.owner = user
+                form.save(commit = True)
+                messages.success(self.request, _(u"Product %s created correctly.") % form.cleaned_data['name'])
+            except:
+                messages.error(self.request, _(u"There was an error creating this Product."))
+            return super(ProductCreate, self).form_valid(form)
+        
+        
+class MyProducts(ListView, TemplateResponseMixin):
+    """
+    Show products for specific user
+    """
+    context_object_name = "product_list"
+    template_name = "my_products.html"
+     
+    def get_queryset(self):
+        """Override get_querset so we can filter on request.user """
+        return Product.objects.filter(owner=self.request.user)
+    
+class ProductDetails(DetailView):
+    """
+    Product Detail View
+    """
+    model = Product
+    slug_field = "upc"
+    context_object_name='product'
+    template_name="pdetails.html"
+    
+        
+        
+

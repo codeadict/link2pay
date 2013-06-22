@@ -19,8 +19,9 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.sites.models import get_current_site
 
-from core.util import CurrencyField
+from core.util import CurrencyField, slugify
 from core.PyQRNative import *
 
 
@@ -59,25 +60,34 @@ class Product(models.Model):
     def __unicode__(self):
         return self.name
     
+    @models.permalink
     def get_absolute_url(self):
-        return reverse('product_detail', args=[self.upc])
+        return ('product_detail', (), {'slug':self.upc})
     
-    def get_short_url(self):
+    @property
+    def get_short_url(self, all_response=False):
         """
         Gets a short URL for sharing using goo.gl service
         """
-        url = self.get_absolute_url()
+        request = None
+        url = ''.join(['http://', get_current_site(request).domain, self.get_absolute_url()])
         if not re.match('http://', url):
             raise Exception(_('Invalid URL'))
-        try:
-            urlopen(Request('http://goo.gl/api/url','url=%s'%quote(url),         
-                    {'UserAgent':'Python'}))
-        except HTTPError, e:
-            json = json.loads(e.read())
-            if 'short_url' not in json:
-                    raise Exception(_('Server has returned Invalid Response'))
-            return json['short_url']
-        raise Exception(_('Unknown error has Ocurred.'))
+        
+        header = { "Content-Type": "application/json" }
+        params = { "longUrl": url }
+        gurl = 'https://www.googleapis.com/urlshortener/v1/url'
+        
+        req = urlopen(Request(gurl, json.dumps(params), header))
+        json_data = req.read()
+
+        if not all_response:
+            data = json.loads(json_data)
+            if 'id' in data:
+                return json.loads(json_data)['id']
+            return u""
+        return json_data
+    
     
     def get_price(self):
         """
@@ -99,10 +109,21 @@ class Product(models.Model):
     
     def save(self, *args, **kwargs):
         """
-        Override save method to automatically add UPC
+        Override save method to automatically add UPC and unique slug
         """
         if not self.upc:
             self.upc = upc_generator()
+        
+        count = 1
+        if not self.slug:
+            slug = slugify(self.name)
+            self.slug = slug
+            while True:
+                existing = Product.objects.filter(slug=self.slug)
+                if len(existing) == 0:
+                    break
+                self.slug = "%s-%s" % (slug, count + 1)
+                count += 1
         return super(Product, self).save(*args, **kwargs)
     
 def urlqrcode_pre_save(sender, instance, **kwargs):    

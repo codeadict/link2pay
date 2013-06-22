@@ -34,8 +34,7 @@ class UserProfile(models.Model):
     password = models.CharField(max_length=255, default='')
     email = models.EmailField(unique=True, null=True)
     image = models.ImageField(
-        upload_to=determine_upload_path, default='', blank=True, null=True,
-        storage=storage.ImageStorage())
+        upload_to="profiles", default='', blank=True, null=True)
     confirmation_code = models.CharField(
         max_length=255, default='', blank=True)
 

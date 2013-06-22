@@ -4,6 +4,8 @@ import urllib2
 
 from django.http import HttpResponseRedirect, Http404
 from django.views.generic import FormView
+from django.contrib.auth.decorators import login_required
+
 
 from core.forms import ContactForm, AuthenticationForm
 
@@ -56,6 +58,31 @@ def login(request):
         r = auth_views.login(request, template_name='users/login.html',
                          authentication_form=AuthenticationForm)
     return r
+
+@login_required()
+def logout(request):
+    """Destroy user session."""
+    mark_registered = request.user.is_authenticated()
+    auth.logout(request)
+    if mark_registered:
+        request.session['mark_registered'] = True
+    return http.HttpResponseRedirect(reverse('product_add'))
+
+
+def check_username(request):
+    """Validate a username and check for uniqueness."""
+    username = request.GET.get('username', None)
+    f = UsernameField()
+    try:
+        f.clean(username)
+    except ValidationError:
+        return http.HttpResponse()
+    try:
+        UserProfile.objects.get(username=username)
+        return http.HttpResponse()
+    except UserProfile.DoesNotExist:
+        pass
+    return http.HttpResponse(status=404)
 
 class ContactView(FormView):
     form_class = ContactForm
