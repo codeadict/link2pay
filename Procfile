@@ -1,1 +1,1 @@
-web: gunicorn ecommerce-taiwan.wsgi
+web: gunicorn wsgi
