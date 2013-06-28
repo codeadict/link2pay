@@ -11,6 +11,7 @@ from core.views import ContactView
 urlpatterns = patterns('',
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     # Examples:
+    url(r'^admin/', include(admin.site.urls)),
     url(r'^myproducts$', MyProducts.as_view(), name='product_list'),
     url(r'^contact/$',
         ContactView.as_view(template_name='contact.html'),
@@ -24,7 +25,6 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    url(r'^manager/', include(admin.site.urls)),
     
 )
 
